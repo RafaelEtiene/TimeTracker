@@ -1,8 +1,14 @@
+using TimeTrackerAPI.Repositories.Interfaces;
+using TimeTrackerAPI.Repositories.Repository;
+using TimeTrackerAPI.Services.Time;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddTransient<ITimeService, TimeService>();
+builder.Services.AddTransient<ITimeRepository, TimeRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
