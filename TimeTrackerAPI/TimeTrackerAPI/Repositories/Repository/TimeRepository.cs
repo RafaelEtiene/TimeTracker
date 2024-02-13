@@ -14,7 +14,7 @@ namespace TimeTrackerAPI.Repositories.Repository
             _configuration = configuration;
         }
 
-        public IEnumerable<Time> GetTimesByTask(int idTask)
+        public async Task<TimeSpan> GetTotalTimeTask(int idTask)
         {
             try
             {
@@ -25,9 +25,11 @@ namespace TimeTrackerAPI.Repositories.Repository
                     var param = new DynamicParameters();
                     param.Add("@IdTask", idTask);
 
-                    var query = $"SELECT idTime,idTask,totalTime,date FROM time WHERE idTask = @IdTask";
+                    var query = @"SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(totalTime)))
+                                FROM time
+                                WHERE idTask = @IdTask";
 
-                    return connection.Query<Time>(query, param);
+                    return await connection.QuerySingleAsync<TimeSpan>(query, param);
                 }
             }
             catch
@@ -36,7 +38,7 @@ namespace TimeTrackerAPI.Repositories.Repository
             }
         }
 
-        public IEnumerable<Time> GetWorkedTimeOfDay()
+        public async Task<TimeSpan> GetWorkedTimeOfDay()
         {
             try
             {
@@ -47,9 +49,11 @@ namespace TimeTrackerAPI.Repositories.Repository
                     var param = new DynamicParameters();
                     param.Add("@Day", DateTime.Now.Day);
 
-                    var query = $"SELECT idTime,idTask,totalTime,date FROM time WHERE DAY(date) = @Day";
+                    var query = @"SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(totalTime)))
+                                FROM time
+                                WHERE DAY(date) = @Day";
 
-                    return connection.Query<Time>(query, param);
+                    return await connection.QuerySingleAsync<TimeSpan>(query, param);
                 }
             }
             catch
@@ -58,7 +62,7 @@ namespace TimeTrackerAPI.Repositories.Repository
             }
         }
 
-        public IEnumerable<Time> GetWorkedTimeOfMonth()
+        public async Task<TimeSpan> GetWorkedTimeOfMonth()
         {
             try
             {
@@ -69,9 +73,11 @@ namespace TimeTrackerAPI.Repositories.Repository
                     var param = new DynamicParameters();
                     param.Add("@CurrentMonth", DateTime.Now.Month);
 
-                    var query = $"SELECT idTime,idTask,totalTime,date FROM time WHERE MONTH(date) = @CurrentMonth";
+                    var query = @"SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(totalTime)))
+                                FROM time
+                                WHERE MONTH(date) = @CurrentMonth";
 
-                    return connection.Query<Time>(query, param);
+                    return await connection.QuerySingleAsync<TimeSpan>(query, param);
                 }
             }
             catch
@@ -80,7 +86,7 @@ namespace TimeTrackerAPI.Repositories.Repository
             }
         }
 
-        public bool InsertTime(Time time)
+        public async Task<bool> InsertTime(Time time)
         {
             try
             {
@@ -89,12 +95,14 @@ namespace TimeTrackerAPI.Repositories.Repository
                     connection.Open();
 
                     var param = new DynamicParameters();
-                    param.Add("@IdTime", null);
                     param.Add("@IdTask", time.IdTask);
                     param.Add("@TotalTime", time.TotalTime);
-                    param.Add("@Date", time.Date);
 
-                    connection.Execute("INSERT INTO time (idTime,idTask,totalTime,date) VALUES (@IdTime,@IdTask,@TotalTime,@Date)", param);
+                    var query = @"INSERT INTO time
+                                  (idTime,idTask,totalTime,date)
+                                  VALUES ((NULL,@IdTask,@TotalTime,NOW())";
+
+                    await connection.ExecuteAsync(query, param);
                 }
 
                 return true;
@@ -102,6 +110,32 @@ namespace TimeTrackerAPI.Repositories.Repository
             catch
             {
                 return false;
+            }
+        }
+
+        public async Task<IEnumerable<TimeByTask>> GetTimeByTasks()
+        {
+            try
+            {
+                using(var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    connection.Open();
+
+                    var query = @"
+                                SELECT tk.idTask AS IdTask, tk.name AS NameTask, tt.type AS Type, SEC_TO_TIME(SUM(TIME_TO_SEC(tm.totalTime))) AS TotalTime
+                                FROM `task` tk
+                                JOIN `time` tm ON tk.idTask = tm.idTask
+                                JOIN `typetask` tt ON tk.type = tt.idType
+                                GROUP BY tk.idTask
+                                ORDER BY tt.idType;
+                            ";
+
+                    return await connection.QueryAsync<TimeByTask>(query);
+                }
+            }
+            catch
+            {
+                throw;
             }
         }
     }

@@ -4,12 +4,14 @@ namespace TimeTrackerAPI.Repositories.Interfaces
 {
     public interface ITimeRepository
     {
-        public bool InsertTime(Time time);
+        public Task<bool> InsertTime(Time time);
 
-        public IEnumerable<Time> GetTimesByTask(int idTask);
+        public Task<TimeSpan> GetTotalTimeTask(int idTask);
 
-        public IEnumerable<Time> GetWorkedTimeOfDay();
+        public Task<TimeSpan> GetWorkedTimeOfDay();
 
-        public IEnumerable<Time> GetWorkedTimeOfMonth();
+        public Task<TimeSpan> GetWorkedTimeOfMonth();
+
+        public Task<IEnumerable<TimeByTask>> GetTimeByTasks();
     }
 }

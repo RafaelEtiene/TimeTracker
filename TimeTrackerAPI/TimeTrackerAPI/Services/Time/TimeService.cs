@@ -1,41 +1,74 @@
-﻿using TimeTrackerAPI.Repositories.Interfaces;
+﻿using TimeTrackerAPI.Domain.Entities;
+using TimeTrackerAPI.Repositories.Interfaces;
 
 namespace TimeTrackerAPI.Services.Time
 {
     public class TimeService : ITimeService
     {
-        private readonly ITimeRepository _timeRepository;
-
+        public ITimeRepository _repository { get; set; }
         public TimeService(ITimeRepository timeRepository)
         {
-            _timeRepository = timeRepository;
+            _repository = timeRepository;
         }
 
-        public IEnumerable<Domain.Entities.Time> GetTimesByTask(int idTask)
+        public async Task<TimeSpan> GetTotalTimeTask(int idTask)
         {
             try
             {
-                return _timeRepository.GetTimesByTask(idTask);
+                return await _repository.GetTotalTimeTask(idTask);
             }
-            catch(Exception e)
+            catch
             {
-                throw new Exception("An error has ocurred during request", e);
+                throw;
             }
         }
 
-        public IEnumerable<Domain.Entities.Time> GetWorkedTimeOfDay()
+        public async Task<TimeSpan> GetWorkedTimeOfDay()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _repository.GetWorkedTimeOfDay();
+            }
+            catch
+            {
+                throw;
+            }
         }
 
-        public IEnumerable<Domain.Entities.Time> GetWorkedTimeOfMonth()
+        public async Task<TimeSpan> GetWorkedTimeOfMonth()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _repository.GetWorkedTimeOfMonth();
+            }
+            catch
+            {
+                throw;
+            }
         }
 
-        public bool InsertTime(Domain.Entities.Time time)
+        public async Task<bool> InsertTime(Domain.Entities.Time time)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _repository.InsertTime(time);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<TimeByTask>> GetTimeByTask()
+        {
+            try
+            {
+                return await _repository.GetTimeByTasks();
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

@@ -1,13 +1,17 @@
-﻿namespace TimeTrackerAPI.Services.Time
+﻿using TimeTrackerAPI.Domain.Entities;
+
+namespace TimeTrackerAPI.Services.Time
 {
     public interface ITimeService
     {
-        public bool InsertTime(TimeTrackerAPI.Domain.Entities.Time time);
+        public Task<bool> InsertTime(Domain.Entities.Time time);
 
-        public IEnumerable<TimeTrackerAPI.Domain.Entities.Time> GetTimesByTask(int idTask);
+        public Task<TimeSpan> GetTotalTimeTask(int idTask);
 
-        public IEnumerable<TimeTrackerAPI.Domain.Entities.Time> GetWorkedTimeOfDay();
+        public Task<TimeSpan> GetWorkedTimeOfDay();
 
-        public IEnumerable<TimeTrackerAPI.Domain.Entities.Time> GetWorkedTimeOfMonth();
+        public Task<TimeSpan> GetWorkedTimeOfMonth();
+
+        public Task<IEnumerable<TimeByTask>> GetTimeByTask();
     }
 }
