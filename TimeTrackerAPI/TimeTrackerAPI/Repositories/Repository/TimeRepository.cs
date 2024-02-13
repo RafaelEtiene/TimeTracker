@@ -40,102 +40,74 @@ namespace TimeTrackerAPI.Repositories.Repository
 
         public async Task<TimeSpan> GetWorkedTimeOfDay()
         {
-            try
+            using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-                {
-                    connection.Open();
+                connection.Open();
 
-                    var param = new DynamicParameters();
-                    param.Add("@Day", DateTime.Now.Day);
+                var param = new DynamicParameters();
+                param.Add("@Day", DateTime.Now.Day);
 
-                    var query = @"SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(totalTime)))
-                                FROM time
-                                WHERE DAY(date) = @Day";
+                var query = @"SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(totalTime)))
+                            FROM time
+                            WHERE DAY(date) = @Day";
 
-                    return await connection.QuerySingleAsync<TimeSpan>(query, param);
-                }
-            }
-            catch
-            {
-                throw;
+                return await connection.QuerySingleAsync<TimeSpan>(query, param);
             }
         }
 
         public async Task<TimeSpan> GetWorkedTimeOfMonth()
         {
-            try
+            using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-                {
-                    connection.Open();
+                connection.Open();
 
-                    var param = new DynamicParameters();
-                    param.Add("@CurrentMonth", DateTime.Now.Month);
+                var param = new DynamicParameters();
+                param.Add("@CurrentMonth", DateTime.Now.Month);
 
-                    var query = @"SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(totalTime)))
-                                FROM time
-                                WHERE MONTH(date) = @CurrentMonth";
+                var query = @"SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(totalTime)))
+                            FROM time
+                            WHERE MONTH(date) = @CurrentMonth";
 
-                    return await connection.QuerySingleAsync<TimeSpan>(query, param);
-                }
-            }
-            catch
-            {
-                throw;
+                return await connection.QuerySingleAsync<TimeSpan>(query, param);
             }
         }
 
         public async Task<bool> InsertTime(Time time)
         {
-            try
+            using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-                {
-                    connection.Open();
+                connection.Open();
 
-                    var param = new DynamicParameters();
-                    param.Add("@IdTask", time.IdTask);
-                    param.Add("@TotalTime", time.TotalTime);
+                var param = new DynamicParameters();
+                param.Add("@IdTask", time.IdTask);
+                param.Add("@TotalTime", time.TotalTime);
 
-                    var query = @"INSERT INTO time
-                                  (idTime,idTask,totalTime,date)
-                                  VALUES ((NULL,@IdTask,@TotalTime,NOW())";
+                var query = @"INSERT INTO time
+                                (idTime,idTask,totalTime,date)
+                                VALUES ((NULL,@IdTask,@TotalTime,NOW())";
 
-                    await connection.ExecuteAsync(query, param);
-                }
-
-                return true;
+                await connection.ExecuteAsync(query, param);
             }
-            catch
-            {
-                return false;
-            }
+
+            return true;
         }
 
         public async Task<IEnumerable<TimeByTask>> GetTimeByTasks()
         {
-            try
+            using(var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                using(var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
-                {
-                    connection.Open();
+                connection.Open();
 
-                    var query = @"
-                                SELECT tk.idTask AS IdTask, tk.name AS NameTask, tt.type AS Type, SEC_TO_TIME(SUM(TIME_TO_SEC(tm.totalTime))) AS TotalTime
-                                FROM `task` tk
-                                JOIN `time` tm ON tk.idTask = tm.idTask
-                                JOIN `typetask` tt ON tk.type = tt.idType
-                                GROUP BY tk.idTask
-                                ORDER BY tt.idType;
-                            ";
+                var query = @"
+                            SELECT tk.idTask AS IdTask, tk.name AS NameTask, tt.type AS Type, SEC_TO_TIME(SUM(TIME_TO_SEC(tm.totalTime))) AS TotalTime
+                            FROM `task` tk
+                            JOIN `time` tm ON tk.idTask = tm.idTask
+                            JOIN `typetask` tt ON tk.type = tt.idType
+                            GROUP BY tk.idTask
+                            ORDER BY tt.idType;
+                        ";
 
-                    return await connection.QueryAsync<TimeByTask>(query);
-                }
-            }
-            catch
-            {
-                throw;
+                return await connection.QueryAsync<TimeByTask>(query);
             }
         }
     }
