@@ -1,8 +1,11 @@
-
 <body>
 <nav class="nav-bar">
   <h3 class="taskTitle">Ajustar validação no envio</h3>
-  <p class="taskTrack">00:00:48</p>
+  <p class="taskTrack">{{formatTime()}}</p>
+
+   <div id="circle-start" (click)="startPauseTimer()">
+    <i id="btnStartPause" class="fa fa-play fa-2x" aria-hidden="true"></i>
+   </div>
 </nav>
 <div class="left-bar">
 </div> 
