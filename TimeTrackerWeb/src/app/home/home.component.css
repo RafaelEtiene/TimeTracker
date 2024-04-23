@@ -38,9 +38,30 @@ body {
     transition: all 0.3s ease;
   }
 }
-
+.content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
 .left-bar {
   height: 100%;
   width: 12%;
   background-color: #4f5466;
+}
+.right-bar {
+  height: 100%;
+  width: 100%;
+  .tasks {
+    background-color: red;
+    border: 3px double purple;
+    border-radius: .5rem;
+    margin-top: 2rem;
+    width: 100%;
+    height: 6rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    color: #ffff;
+  }
 }
