@@ -26,6 +26,7 @@ body {
   }
 
   #circle-start {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,8 +54,8 @@ body {
   height: 100%;
   width: 100%;
   .tasks {
-    background-color: red;
-    border: 3px double purple;
+    cursor: pointer;
+    background-color: rgba(165, 165, 165, 0.548);
     border-radius: .5rem;
     margin-top: 2rem;
     width: 100%;
@@ -62,6 +63,18 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    align-items: center;
     color: #ffff;
+    margin: 3px 0 3px 0;
+
+    .task-title {
+      font-size: 2rem;
+      font-weight: 900;
+    }
+
+    .taskTrack {
+      font-size: 2rem;
+      font-weight: 900;
+    }
   }
 }
