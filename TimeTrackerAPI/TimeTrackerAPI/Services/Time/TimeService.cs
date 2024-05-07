@@ -59,15 +59,16 @@ namespace TimeTrackerAPI.Services.Time
             }
         }
 
-        public async Task<IEnumerable<TimeByTask>> GetTimeByTask()
+        public async Task<IEnumerable<TimeByTask>> GetCurrentTimeByTasks()
         {
             try
             {
-                return await _repository.GetTimeByTasks();
+                var lsTimeTask = await _repository.GetCurrentTimeByTasks();
+                return await _repository.GetCurrentTimeByTasks();
             }
-            catch
+            catch(Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
     }

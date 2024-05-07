@@ -12,6 +12,6 @@ namespace TimeTrackerAPI.Services.Time
 
         public Task<TimeSpan> GetWorkedTimeOfMonth();
 
-        public Task<IEnumerable<TimeByTask>> GetTimeByTask();
+        public Task<IEnumerable<TimeByTask>> GetCurrentTimeByTasks();
     }
 }

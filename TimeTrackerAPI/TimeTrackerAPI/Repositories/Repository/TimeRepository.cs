@@ -92,20 +92,19 @@ namespace TimeTrackerAPI.Repositories.Repository
             return true;
         }
 
-        public async Task<IEnumerable<TimeByTask>> GetTimeByTasks()
+        public async Task<IEnumerable<TimeByTask>> GetCurrentTimeByTasks()
         {
             using(var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
                 connection.Open();
 
-                var query = @"
-                            SELECT tk.idTask AS IdTask, tk.name AS NameTask, tt.type AS Type, SEC_TO_TIME(SUM(TIME_TO_SEC(tm.totalTime))) AS TotalTime
-                            FROM `task` tk
-                            JOIN `time` tm ON tk.idTask = tm.idTask
-                            JOIN `typetask` tt ON tk.type = tt.idType
-                            GROUP BY tk.idTask
-                            ORDER BY tt.idType;
-                        ";
+                var query = @"SELECT tk.idTask AS IdTask, tk.name AS NameTask, SUM(TIME_TO_SEC(tm.totalTime)) AS TotalTime
+                              FROM `task` tk
+                              JOIN `time` tm ON tk.idTask = tm.idTask
+                              JOIN `typetask` tt ON tk.type = tt.idType
+                              WHERE DATE(`date`) = CURRENT_DATE
+                              GROUP BY tk.idTask
+                              ORDER BY tt.idType;";
 
                 return await connection.QueryAsync<TimeByTask>(query);
             }

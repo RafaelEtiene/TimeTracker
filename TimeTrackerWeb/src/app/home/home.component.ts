@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, Subscription, interval } from 'rxjs';
+import { TimeService } from 'src/api/time.service';
 import { TaskViewModel } from 'src/viewModel/taskViewModel';
 
 @Component({
@@ -8,28 +9,30 @@ import { TaskViewModel } from 'src/viewModel/taskViewModel';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+  constructor(private _timeService: TimeService) {
+  }
+
   ngOnInit(): void {
+    this.getCurrentTimeTask();
     this.taskSelected = this.lsTasks[0];
   }
 
-    public lsTasks: TaskViewModel[] = [
-    {
-      idTask: 1,
-      nameTask: 'Ajuste na validação',
-      time: 0
-    },
-    {
-      idTask: 2,
-      nameTask: 'Criação de novo btn',
-      time: 0
-    }
-  ];
+  public lsTasks: TaskViewModel[] = [];
 
   public taskSelected: TaskViewModel = null!;
   private timerSubscription: Subscription = new Subscription;
   public time: number = 0;
   public timerRunning: boolean = false;
 
+  getCurrentTimeTask() {
+    debugger;
+    this._timeService.GetCurrentTimeTask()
+      .subscribe(r => {
+        //this.lsTasks = r;
+        console.log(r);
+        console.log(this.lsTasks);
+      })
+  }
   startPauseTimer(taskSelected: TaskViewModel) {
     var btnStartPause = document.querySelector('#btnStartPause');
     var circle = document.getElementById('circle-start');
@@ -50,7 +53,7 @@ export class HomeComponent implements OnInit {
   startTimer(task: TaskViewModel) {
     this.timerRunning = true;
     this.timerSubscription = interval(1000).subscribe(() => {
-      task.time++;
+      task.totalTime++;
     });
   }
 
@@ -82,7 +85,7 @@ export class HomeComponent implements OnInit {
   updateTime(task: TaskViewModel){
     let currentTask = this.lsTasks.find(e => e.idTask == task.idTask);
     if(currentTask){
-      currentTask.time = task.time;
+      currentTask.totalTime = task.totalTime;
     }
   }
   private padZero(value: number): string {

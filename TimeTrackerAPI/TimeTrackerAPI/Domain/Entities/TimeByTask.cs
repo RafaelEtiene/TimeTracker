@@ -6,9 +6,7 @@
 
         public string NameTask { get; set; }
 
-        public string Type { get; set; }
-
-        public TimeSpan TotalTime { get; set; }
+        public int TotalTime { get; set; }
 
     }
 }

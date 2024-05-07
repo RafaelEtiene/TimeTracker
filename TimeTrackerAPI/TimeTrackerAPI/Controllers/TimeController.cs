@@ -61,12 +61,12 @@ namespace TimeTrackerAPI.Controllers
         }
 
         [HttpGet]
-        [Route("GetTimeByTask")]
+        [Route("GetCurrentTimeByTasks")]
         public async Task<IActionResult> GetTimeByTask()
         {
             try
             {
-                var result = await _timeService.GetTimeByTask();
+                var result = await _timeService.GetCurrentTimeByTasks();
                 return Ok(result);
             }
             catch (Exception e)

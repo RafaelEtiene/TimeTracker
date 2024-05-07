@@ -1,7 +1,6 @@
 <body>
 <nav class="nav-bar">
-  <h3 class="taskTitle">{{taskSelected.nameTask}}</h3>
-  <p class="taskTrack">{{formatTime(taskSelected.time)}}</p>
+
 
    <div id="circle-start" (click)="startPauseTimer(taskSelected)">
     <i id="btnStartPause" class="fa fa-play fa-2x" aria-hidden="true"></i>
@@ -13,7 +12,7 @@
   <div class="right-bar">
       <div class="tasks" *ngFor="let task of lsTasks" (click)="selectTask(task.idTask)">
         <h3 class="task-title">{{task.nameTask}}</h3>
-        <p class="taskTrack">{{formatTime(task.time)}}</p>
+        <p class="taskTrack">{{formatTime(task.totalTime)}}</p>
       </div>
   </div>
 </div>
