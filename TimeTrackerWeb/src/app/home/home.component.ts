@@ -6,7 +6,8 @@ import { TaskViewModel } from 'src/viewModel/taskViewModel';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  providers: [TimeService]
 })
 export class HomeComponent implements OnInit {
   constructor(private _timeService: TimeService) {
@@ -28,7 +29,7 @@ export class HomeComponent implements OnInit {
     debugger;
     this._timeService.GetCurrentTimeTask()
       .subscribe(r => {
-        //this.lsTasks = r;
+        this.lsTasks = r;
         console.log(r);
         console.log(this.lsTasks);
       })

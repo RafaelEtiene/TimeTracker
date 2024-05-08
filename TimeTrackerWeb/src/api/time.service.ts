@@ -12,7 +12,7 @@ export class TimeService {
   constructor(private httpClient: HttpClient) { 
   }
 
-  GetCurrentTimeTask() : Observable<TaskViewModel[]> {
+  public GetCurrentTimeTask() : Observable<TaskViewModel[]> {
     return this.httpClient.get<TaskViewModel[]>(`${this.basePath}/Time/GetCurrentTimeByTasks`);
   }
 }

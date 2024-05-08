@@ -96,8 +96,6 @@ namespace TimeTrackerAPI.Repositories.Repository
         {
             using(var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                connection.Open();
-
                 var query = @"SELECT tk.idTask AS IdTask, tk.name AS NameTask, SUM(TIME_TO_SEC(tm.totalTime)) AS TotalTime
                               FROM `task` tk
                               JOIN `time` tm ON tk.idTask = tm.idTask
@@ -105,6 +103,8 @@ namespace TimeTrackerAPI.Repositories.Repository
                               WHERE DATE(`date`) = CURRENT_DATE
                               GROUP BY tk.idTask
                               ORDER BY tt.idType;";
+
+                connection.Open();
 
                 return await connection.QueryAsync<TimeByTask>(query);
             }
